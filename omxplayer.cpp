@@ -573,6 +573,7 @@ int main(int argc, char *argv[])
   const int orientation_opt = 0x204;
   const int live_opt = 0x205;
   const int layout_opt = 0x206;
+  const int rtsp_transport_opt = 0x207;
 
   struct option longopts[] = {
     { "info",         no_argument,        NULL,          'i' },
@@ -616,6 +617,7 @@ int main(int argc, char *argv[])
     { "orientation",  required_argument,  NULL,          orientation_opt },
     { "live",         no_argument,        NULL,          live_opt },
     { "layout",       required_argument,  NULL,          layout_opt },
+    { "rtsp_transport", no_argument,      NULL,          rtsp_transport_opt },
     { 0, 0, 0, 0 }
   };
 
@@ -784,6 +786,12 @@ int main(int argc, char *argv[])
           print_usage();
           return 0;
         }
+        break;
+      }
+      case rtsp_transport_opt:
+      {
+        const char *rtsp_transports[] = {"udp", "tcp", "udp_multicast", "http"};
+        
         break;
       }
       case 'b':
