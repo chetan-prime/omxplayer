@@ -111,6 +111,7 @@ bool              m_no_hdmi_clock_sync  = false;
 bool              m_stop                = false;
 int               m_subtitle_index      = -1;
 DllBcmHost        m_BcmHost;
+DllAvUtil         *m_dllAvUtil;
 OMXPlayerVideo    m_player_video;
 OMXPlayerAudio    m_player_audio;
 OMXPlayerSubtitles  m_player_subtitles;
@@ -187,6 +188,8 @@ void print_usage()
   printf("              --live                    Set for live tv or vod type stream\n");
   printf("              --layout                  Set output speaker layout (e.g. 5.1)\n");
   printf("              --key-config <file>       Uses key bindings specified in <file> instead of the default\n");
+  printf("              --rtsp_transport <proto>  RTP Transport Protocol (default:autoselected)\n");
+
 }
 
 void print_keybindings()
@@ -549,6 +552,7 @@ int main(int argc, char *argv[])
   bool m_live            = false; // set to true for live tv or vod for low buffering
   enum PCMLayout m_layout = PCM_LAYOUT_2_0;
   TV_DISPLAY_STATE_T   tv_state;
+  std::string           m_rstp_transport;
 
   const int font_opt        = 0x100;
   const int italic_font_opt = 0x201;
@@ -791,7 +795,17 @@ int main(int argc, char *argv[])
       case rtsp_transport_opt:
       {
         const char *rtsp_transports[] = {"udp", "tcp", "udp_multicast", "http"};
-        
+        for (i=0; i<sizeof rtsp_transports/sizeof *rtsp_transports; i++)
+          if (strcmp(optarg, rtsp_transports[i]) == 0)
+          {
+            m_rstp_transport = rtsp_transports[i];
+            break;
+          }
+        if (i == sizeof rtsp_transports/sizeof *rtsp_transports)
+        {
+          print_usage();
+          return 0;
+        }
         break;
       }
       case 'b':
@@ -906,6 +920,17 @@ int main(int argc, char *argv[])
   m_keyboard.setKeymap(keymap);
 
   m_thread_player = true;
+
+  if (m_rstp_transport!="")
+  {
+    m_dllAvUtil = new DllAvUtil;
+    if (!m_dllAvUtil->Load())
+    {
+    	fprintf(stderr,"Unable to load libavutil\n");
+        return 0;
+    }
+    m_dllAvUtil->av_opt_set
+  }
 
   if(!m_omx_reader.Open(m_filename.c_str(), m_dump_format, m_live))
     goto do_exit;
@@ -1630,6 +1655,12 @@ do_exit:
     m_omx_pkt = NULL;
   }
 
+  if (m_dllAvUtil)
+  {
+    delete m_dllAvUtil;
+    m_dllAvUtil = NULL;
+  }
+  
   m_omx_reader.Close();
 
   m_av_clock->OMXDeinitialize();
