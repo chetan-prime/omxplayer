@@ -126,6 +126,8 @@ protected:
   void UnLock();
   bool SetActiveStreamInternal(OMXStreamType type, unsigned int index);
   bool                      m_seek;
+  std::string               m_rtsp_transport;
+
 private:
 public:
   OMXReader();
@@ -162,7 +164,7 @@ public:
   bool SeekChapter(int chapter, double* startpts);
   int GetAudioIndex() { return (m_audio_index >= 0) ? m_streams[m_audio_index].index : -1; };
   int GetSubtitleIndex() { return (m_subtitle_index >= 0) ? m_streams[m_subtitle_index].index : -1; };
-  
+
   int GetRelativeIndex(size_t index)
   {
     assert(index < MAX_STREAMS);
@@ -179,5 +181,6 @@ public:
   std::string GetStreamName(OMXStreamType type, unsigned int index);
   std::string GetStreamType(OMXStreamType type, unsigned int index);
   bool CanSeek();
+  void setRTSPTransport(std::string rtsp_transport);
 };
 #endif
