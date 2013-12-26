@@ -111,7 +111,6 @@ bool              m_no_hdmi_clock_sync  = false;
 bool              m_stop                = false;
 int               m_subtitle_index      = -1;
 DllBcmHost        m_BcmHost;
-DllAvUtil         *m_dllAvUtil;
 OMXPlayerVideo    m_player_video;
 OMXPlayerAudio    m_player_audio;
 OMXPlayerSubtitles  m_player_subtitles;
@@ -923,13 +922,7 @@ int main(int argc, char *argv[])
 
   if (m_rstp_transport!="")
   {
-    m_dllAvUtil = new DllAvUtil;
-    if (!m_dllAvUtil->Load())
-    {
-    	fprintf(stderr,"Unable to load libavutil\n");
-        return 0;
-    }
-    m_dllAvUtil->av_opt_set
+      m_omx_reader.setRTSPTransport(m_rstp_transport);
   }
 
   if(!m_omx_reader.Open(m_filename.c_str(), m_dump_format, m_live))
