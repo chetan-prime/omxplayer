@@ -163,6 +163,11 @@ bool OMXReader::Open(std::string filename, bool dump_format, bool live /* =false
       Close();
       return false;
     }
+    if ( (m_rtsp_transport!="") && (!strcmp(iformat->name,"rtsp")) )
+    {
+      CLog::Log(LOGINFO, "Setting RTSP Transport to '"+m_rtsp_transport+"'");
+      m_dllAvUtil->av_opt_set((void*)iformat,"rtsp_transport",m_rtsp_transport.c_str());
+    }
   }
   else
   {
@@ -1297,3 +1302,10 @@ bool OMXReader::CanSeek()
 
   return false;
 }
+
+void OMXReader::setRTSPTransport(std::string rtsp_transport)
+{
+  m_rtsp_transport=rtsp_transport;
+}
+
+
