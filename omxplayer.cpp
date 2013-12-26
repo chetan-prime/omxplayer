@@ -551,7 +551,7 @@ int main(int argc, char *argv[])
   bool m_live            = false; // set to true for live tv or vod for low buffering
   enum PCMLayout m_layout = PCM_LAYOUT_2_0;
   TV_DISPLAY_STATE_T   tv_state;
-  std::string           m_rstp_transport;
+  std::string           m_rtsp_transport;
 
   const int font_opt        = 0x100;
   const int italic_font_opt = 0x201;
@@ -797,7 +797,7 @@ int main(int argc, char *argv[])
         for (i=0; i<sizeof rtsp_transports/sizeof *rtsp_transports; i++)
           if (strcmp(optarg, rtsp_transports[i]) == 0)
           {
-            m_rstp_transport = rtsp_transports[i];
+            m_rtsp_transport = rtsp_transports[i];
             break;
           }
         if (i == sizeof rtsp_transports/sizeof *rtsp_transports)
@@ -920,9 +920,9 @@ int main(int argc, char *argv[])
 
   m_thread_player = true;
 
-  if (m_rstp_transport!="")
+  if (m_rtsp_transport!="")
   {
-      m_omx_reader.setRTSPTransport(m_rstp_transport);
+      m_omx_reader.setRTSPTransport(m_rtsp_transport);
   }
 
   if(!m_omx_reader.Open(m_filename.c_str(), m_dump_format, m_live))
